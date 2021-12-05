@@ -20,7 +20,7 @@ public class RoomController {
     private final RoomVoMapper roomVoMapper;
 
     @PostMapping("/room")
-    public ResponseEntity<String> create(RoomCreationVo roomCreationVo) {
+    public ResponseEntity<String> create(final RoomCreationVo roomCreationVo) {
         roomIncomingPort.save(roomVoMapper.toRoom(roomCreationVo));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

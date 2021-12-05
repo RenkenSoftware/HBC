@@ -4,6 +4,7 @@ import de.renkensoftware.hbc.domain.user.core.model.User;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,5 +33,15 @@ class UserTest {
         assertThat(user.getPassword()).isEqualTo("password");
         assertThat(user.getName()).isEqualTo("name");
         assertThat(user.getFriendIds()).hasSize(1);
+    }
+
+    @Test
+    void addFriendId() {
+        User user = new User(UUID.randomUUID(), "email", "password", "name", Collections.emptyList());
+        UUID friendId = UUID.randomUUID();
+
+        user.addFriendId(friendId);
+
+        assertThat(user.getFriendIds().iterator().next()).isEqualTo(friendId);
     }
 }

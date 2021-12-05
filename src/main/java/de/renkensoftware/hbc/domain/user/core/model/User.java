@@ -32,4 +32,8 @@ public class User {
         this.name= name;
         this.friendIds.addAll(friendIds);
     }
+
+    public void addFriendId(final UUID friendId) {
+        this.friendIds.add(friendId);
+    }
 }

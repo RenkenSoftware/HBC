@@ -17,7 +17,7 @@ public class MessageController {
     private final MessageVoMapper messageVoMapper;
 
     @PostMapping("/message")
-    public ResponseEntity<String> create(MessageCreationVo messageCreationVo) {
+    public ResponseEntity<String> create(final MessageCreationVo messageCreationVo) {
         messageIncomingPort.save(messageVoMapper.toMessage(messageCreationVo));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

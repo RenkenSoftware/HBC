@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MessageVoMapper {
 
-    public Message toMessage(MessageCreationVo messageCreationVo) {
+    public Message toMessage(final MessageCreationVo messageCreationVo) {
         return new Message(messageCreationVo.getSenderId(),
                 messageCreationVo.getRoomId(),
                 messageCreationVo.getContent());

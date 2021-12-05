@@ -4,7 +4,9 @@ import de.renkensoftware.hbc.domain.message.core.model.Message;
 import de.renkensoftware.hbc.domain.message.core.ports.MessageIncomingPort;
 import de.renkensoftware.hbc.domain.message.core.ports.MessageOutgoingPort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+@Service
 @RequiredArgsConstructor
 public class MessageFacade implements MessageIncomingPort {
 

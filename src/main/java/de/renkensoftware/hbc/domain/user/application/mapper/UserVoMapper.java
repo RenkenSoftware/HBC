@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserVoMapper {
 
-    public User toUser(UserCreationVo userCreationVo) {
+    public User toUser(final UserCreationVo userCreationVo) {
         return new User(userCreationVo.getEmail(), userCreationVo.getPassword());
     }
 }

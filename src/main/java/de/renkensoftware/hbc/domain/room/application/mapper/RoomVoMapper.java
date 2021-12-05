@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class RoomVoMapper {
 
-    public Room toRoom(RoomCreationVo roomCreationVo) {
+    public Room toRoom(final RoomCreationVo roomCreationVo) {
         return new Room(roomCreationVo.getMemberIds());
     }
 }

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -17,7 +18,7 @@ public class UserController {
     private final UserVoMapper userVoMapper;
 
     @PostMapping("/user")
-    public ResponseEntity<String> create(UserCreationVo userCreationVo) {
+    public ResponseEntity<String> create(@RequestBody final UserCreationVo userCreationVo) {
         userIncomingPort.save(userVoMapper.toUser(userCreationVo));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

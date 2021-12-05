@@ -22,4 +22,8 @@ public class Room {
         this.id = id;
         this.memberIds.addAll(memberIds);
     }
+
+    public void addMemberId(final UUID memberId) {
+        this.memberIds.add(memberId);
+    }
 }

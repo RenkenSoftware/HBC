@@ -4,7 +4,9 @@ import de.renkensoftware.hbc.domain.user.core.model.User;
 import de.renkensoftware.hbc.domain.user.core.ports.UserIncomingPort;
 import de.renkensoftware.hbc.domain.user.core.ports.UserOutgoingPort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+@Service
 @RequiredArgsConstructor
 public class UserFacade implements UserIncomingPort {
 
