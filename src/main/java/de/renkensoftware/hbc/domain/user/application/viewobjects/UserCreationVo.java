@@ -1,13 +1,13 @@
 package de.renkensoftware.hbc.domain.user.application.viewobjects;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@RequiredArgsConstructor
+@Setter
 public class UserCreationVo {
 
-    private final String email;
+    private String email;
 
-    private final String password;
+    private String password;
 }

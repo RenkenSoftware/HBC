@@ -14,7 +14,9 @@ class UserVoMapperTest {
 
     @Test
     void toUser() {
-        UserCreationVo userCreationVo = new UserCreationVo("email", "password");
+        UserCreationVo userCreationVo = new UserCreationVo();
+        userCreationVo.setEmail("email");
+        userCreationVo.setPassword("password");
 
         User user = userVoMapper.toUser(userCreationVo);
 

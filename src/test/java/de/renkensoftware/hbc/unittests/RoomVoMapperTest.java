@@ -19,7 +19,8 @@ class RoomVoMapperTest {
     void toRoom() {
         Collection<UUID> memberIds = List.of(UUID.randomUUID());
 
-        RoomCreationVo roomCreationVo = new RoomCreationVo(memberIds);
+        RoomCreationVo roomCreationVo = new RoomCreationVo();
+        roomCreationVo.setMemberIds(memberIds);
 
         Room room = roomVoMapper.toRoom(roomCreationVo);
 

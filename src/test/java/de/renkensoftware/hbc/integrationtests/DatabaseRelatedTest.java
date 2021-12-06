@@ -1,5 +1,7 @@
 package de.renkensoftware.hbc.integrationtests;
 
+import de.renkensoftware.hbc.domain.message.infrastructure.MessageJpaRepository;
+import de.renkensoftware.hbc.domain.room.infrastructure.RoomJpaRepository;
 import de.renkensoftware.hbc.domain.user.infrastructure.UserJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,12 @@ public class DatabaseRelatedTest {
     @Autowired
     private UserJpaRepository userJpaRepository;
 
+    @Autowired
+    private RoomJpaRepository roomJpaRepository;
+
+    @Autowired
+    private MessageJpaRepository messageJpaRepository;
+
     private static final PostgreSQLContainer POSTGRESQL_CONTAINER = new PostgreSQLContainer("postgres:13.3")
             .withDatabaseName("test_db").withUsername("test_user").withPassword("test_pw");
 
@@ -32,5 +40,9 @@ public class DatabaseRelatedTest {
     void tidyUp() {
         userJpaRepository.deleteAll();
         userJpaRepository.flush();
+        roomJpaRepository.deleteAll();
+        roomJpaRepository.flush();
+        messageJpaRepository.deleteAll();
+        messageJpaRepository.flush();
     }
 }

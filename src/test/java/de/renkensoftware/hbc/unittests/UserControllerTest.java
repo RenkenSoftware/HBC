@@ -22,7 +22,10 @@ class UserControllerTest {
 
     @Test
     void create() {
-        UserCreationVo userCreationVo = new UserCreationVo("email", "password");
+        UserCreationVo userCreationVo = new UserCreationVo();
+        userCreationVo.setEmail("email");
+        userCreationVo.setPassword("password");
+
         User user = new User("email", "password");
 
         when(userVoMapper.toUser(userCreationVo)).thenReturn(user);

@@ -18,12 +18,16 @@ class MessageVoMapperTest {
         UUID senderId = UUID.randomUUID();
         UUID roomId = UUID.randomUUID();
 
-        MessageCreationVo messageCreationVo = new MessageCreationVo(senderId, roomId, "content");
+        MessageCreationVo messageCreationVo = new MessageCreationVo();
+        messageCreationVo.setSenderId(senderId);
+        messageCreationVo.setRoomId(roomId);
+        messageCreationVo.setContent("content");
 
         Message message = messageVoMapper.toMessage(messageCreationVo);
 
         assertThat(message.getId()).isNotNull();
         assertThat(message.getSenderId()).isEqualTo(senderId);
         assertThat(message.getRoomId()).isEqualTo(roomId);
+        assertThat(message.getContent()).isEqualTo("content");
     }
 }

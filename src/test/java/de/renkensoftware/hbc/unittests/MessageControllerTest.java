@@ -26,7 +26,11 @@ class MessageControllerTest {
         UUID senderId = UUID.randomUUID();
         UUID roomId = UUID.randomUUID();
 
-        MessageCreationVo messageCreationVo = new MessageCreationVo(senderId, roomId, "content");
+        MessageCreationVo messageCreationVo = new MessageCreationVo();
+        messageCreationVo.setSenderId(senderId);
+        messageCreationVo.setRoomId(roomId);
+        messageCreationVo.setContent("content");
+
         Message message = new Message(senderId, roomId, "content");
 
         when(messageVoMapper.toMessage(messageCreationVo)).thenReturn(message);

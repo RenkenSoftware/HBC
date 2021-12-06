@@ -1,14 +1,14 @@
 package de.renkensoftware.hbc.domain.room.application.viewobjects;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.util.Collection;
 import java.util.UUID;
 
 @Getter
-@RequiredArgsConstructor
+@Setter
 public class RoomCreationVo {
 
-    private final Collection<UUID> memberIds;
+    private Collection<UUID> memberIds;
 }

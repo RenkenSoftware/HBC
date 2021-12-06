@@ -28,7 +28,8 @@ class RoomControllerTest {
     void create() {
         Collection<UUID> memberIds = List.of(UUID.randomUUID());
 
-        RoomCreationVo roomCreationVo = new RoomCreationVo(memberIds);
+        RoomCreationVo roomCreationVo = new RoomCreationVo();
+        roomCreationVo.setMemberIds(memberIds);
         Room room = new Room(memberIds);
 
         when(roomVoMapper.toRoom(roomCreationVo)).thenReturn(room);
