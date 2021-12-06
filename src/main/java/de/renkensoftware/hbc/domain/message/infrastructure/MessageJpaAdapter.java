@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 public class MessageJpaAdapter implements MessageOutgoingPort {
 
     private final MessageEntityMapper messageEntityMapper;
-
     private final MessageJpaRepository messageJpaRepository;
 
     @Override

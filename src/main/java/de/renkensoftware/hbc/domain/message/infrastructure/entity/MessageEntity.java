@@ -2,7 +2,6 @@ package de.renkensoftware.hbc.domain.message.infrastructure.entity;
 
 import de.renkensoftware.hbc.domain.room.infrastructure.entity.RoomEntity;
 import de.renkensoftware.hbc.domain.user.infrastructure.entity.UserEntity;
-import jdk.jfr.Enabled;
 import lombok.Getter;
 import lombok.Setter;
 

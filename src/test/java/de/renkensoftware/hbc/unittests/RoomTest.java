@@ -4,6 +4,7 @@ import de.renkensoftware.hbc.domain.room.core.model.Room;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,5 +31,15 @@ class RoomTest {
 
         assertThat(room.getId()).isEqualTo(id);
         assertThat(room.getMemberIds()).hasSize(1);
+    }
+
+    @Test
+    void addMemberId() {
+        Room room = new Room(UUID.randomUUID(), Collections.emptyList());
+        UUID memberId = UUID.randomUUID();
+
+        room.addMemberId(memberId);
+
+        assertThat(room.getMemberIds().iterator().next()).isEqualTo(memberId);
     }
 }
