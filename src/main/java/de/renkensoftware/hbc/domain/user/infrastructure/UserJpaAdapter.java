@@ -3,6 +3,7 @@ package de.renkensoftware.hbc.domain.user.infrastructure;
 import de.renkensoftware.hbc.domain.user.core.model.User;
 import de.renkensoftware.hbc.domain.user.core.ports.UserOutgoingPort;
 import de.renkensoftware.hbc.domain.user.infrastructure.mapper.UserEntityMapper;
+import de.renkensoftware.hbc.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,5 +17,10 @@ public class UserJpaAdapter implements UserOutgoingPort {
     @Override
     public void save(final User user) {
         userJpaRepository.save(userEntityMapper.toEntity(user));
+    }
+
+    @Override
+    public User findByEmail(final String email) {
+        return userEntityMapper.toUser(userJpaRepository.findByEmail(email).orElseThrow(UserNotFoundException::new));
     }
 }

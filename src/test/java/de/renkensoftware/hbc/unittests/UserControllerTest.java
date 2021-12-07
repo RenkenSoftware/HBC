@@ -3,11 +3,15 @@ package de.renkensoftware.hbc.unittests;
 import de.renkensoftware.hbc.domain.user.application.UserController;
 import de.renkensoftware.hbc.domain.user.application.mapper.UserVoMapper;
 import de.renkensoftware.hbc.domain.user.application.viewobjects.UserCreationVo;
+import de.renkensoftware.hbc.domain.user.application.viewobjects.UserIdVo;
 import de.renkensoftware.hbc.domain.user.core.model.User;
 import de.renkensoftware.hbc.domain.user.core.ports.UserIncomingPort;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.Collections;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,5 +39,22 @@ class UserControllerTest {
         verify(userIncomingPort).save(user);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    }
+
+    @Test
+    void findByEmail() {
+        UUID id = UUID.randomUUID();
+        String email = "email";
+        User user = new User(id, email, "password", "name", Collections.emptyList());
+        UserIdVo userIdVo = new UserIdVo();
+        userIdVo.setId(id);
+
+        when(userIncomingPort.findByEmail(email)).thenReturn(user);
+        when(userVoMapper.toIdVo(user)).thenReturn(userIdVo);
+
+        ResponseEntity<UserIdVo> response = userController.findByEmail(email);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(userIdVo);
     }
 }

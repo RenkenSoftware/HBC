@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -24,5 +25,5 @@ public class UserEntity {
     private String name;
 
     @ManyToMany
-    private Collection<UserEntity> friends;
+    private Collection<UserEntity> friends = new ArrayList<>();
 }

@@ -6,4 +6,5 @@ public interface UserIncomingPort {
 
     void save(final User user);
 
+    User findByEmail(final String email);
 }
