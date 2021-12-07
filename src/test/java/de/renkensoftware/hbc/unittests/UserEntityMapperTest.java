@@ -60,4 +60,31 @@ class UserEntityMapperTest {
         assertThat(resultEntity.getName()).isEqualTo("name");
         assertThat(resultEntity.getFriends().iterator().next().getFriends().iterator().next().getId()).isEqualTo(id);
     }
+
+    @Test
+    void toUser() {
+        UUID friendId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+
+        UserEntity friendEntity = new UserEntity();
+        friendEntity.setId(friendId);
+        friendEntity.setEmail("friendemail");
+        friendEntity.setPassword("friendpassword");
+        friendEntity.setName("friendname");
+
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(userId);
+        userEntity.setEmail("email");
+        userEntity.setPassword("password");
+        userEntity.setName("name");
+        userEntity.setFriends(List.of(friendEntity));
+
+        User user = userEntityMapper.toUser(userEntity);
+
+        assertThat(user.getId()).isEqualTo(userId);
+        assertThat(user.getEmail()).isEqualTo("email");
+        assertThat(user.getPassword()).isEqualTo("password");
+        assertThat(user.getName()).isEqualTo("name");
+        assertThat(user.getFriendIds().iterator().next()).isEqualTo(friendId);
+    }
 }

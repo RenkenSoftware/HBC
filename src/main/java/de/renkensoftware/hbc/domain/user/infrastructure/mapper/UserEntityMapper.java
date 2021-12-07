@@ -26,4 +26,14 @@ public class UserEntityMapper {
 
         return userEntity;
     }
+
+    public User toUser(final UserEntity userEntity) {
+        return new User(userEntity.getId(),
+                userEntity.getEmail(),
+                userEntity.getPassword(),
+                userEntity.getName(),
+                userEntity.getFriends().stream()
+                        .map(UserEntity::getId)
+                        .toList());
+    }
 }

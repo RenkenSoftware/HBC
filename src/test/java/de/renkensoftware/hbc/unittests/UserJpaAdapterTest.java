@@ -5,12 +5,15 @@ import de.renkensoftware.hbc.domain.user.infrastructure.UserJpaAdapter;
 import de.renkensoftware.hbc.domain.user.infrastructure.UserJpaRepository;
 import de.renkensoftware.hbc.domain.user.infrastructure.entity.UserEntity;
 import de.renkensoftware.hbc.domain.user.infrastructure.mapper.UserEntityMapper;
+import de.renkensoftware.hbc.exception.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -42,5 +45,33 @@ class UserJpaAdapterTest {
         userJpaAdapter.save(user);
 
         verify(userJpaRepository).save(userEntity);
+    }
+
+    @Test
+    void findByEmail() {
+        String email = "email";
+        UUID id = UUID.randomUUID();
+
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(id);
+        userEntity.setEmail(email);
+        userEntity.setPassword("password");
+        userEntity.setName("name");
+
+        User user = new User(id, email, "password", "name", Collections.emptyList());
+
+        when(userJpaRepository.findByEmail(email)).thenReturn(Optional.of(userEntity));
+        when(userEntityMapper.toUser(userEntity)).thenReturn(user);
+
+        assertThat(userJpaAdapter.findByEmail(email)).isEqualTo(user);
+    }
+
+    @Test
+    void findByEmailWithoutResult() {
+        String email = "email";
+
+        when(userJpaRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userJpaAdapter.findByEmail(email));
     }
 }

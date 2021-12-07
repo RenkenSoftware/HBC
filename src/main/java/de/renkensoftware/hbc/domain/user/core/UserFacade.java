@@ -16,4 +16,9 @@ public class UserFacade implements UserIncomingPort {
     public void save(final User user) {
         userOutgoingPort.save(user);
     }
+
+    @Override
+    public User findByEmail(final String email) {
+        return userOutgoingPort.findByEmail(email);
+    }
 }
