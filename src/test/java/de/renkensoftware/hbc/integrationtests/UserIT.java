@@ -2,6 +2,7 @@ package de.renkensoftware.hbc.integrationtests;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.renkensoftware.hbc.domain.user.application.viewobjects.UserAddFriendVo;
 import de.renkensoftware.hbc.domain.user.application.viewobjects.UserCreationVo;
 import de.renkensoftware.hbc.domain.user.application.viewobjects.UserIdVo;
 import de.renkensoftware.hbc.domain.user.infrastructure.UserJpaRepository;
@@ -24,8 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -116,5 +116,50 @@ class UserIT extends DatabaseRelatedTest {
 
         assertThat(responseError.code()).isEqualTo(1);
         assertThat(responseError.message()).isEqualTo("User not found");
+    }
+
+    @Test
+    void addFriend() throws Exception {
+        UUID id = UUID.randomUUID();
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(id);
+        userEntity.setEmail("email");
+        userEntity.setPassword("password");
+        userEntity.setName("name");
+
+        UUID friendId = UUID.randomUUID();
+        UserEntity friendEntity = new UserEntity();
+        friendEntity.setId(friendId);
+        friendEntity.setEmail("friendemail");
+        friendEntity.setPassword("friendpassword");
+        friendEntity.setName("friendname");
+
+        userJpaRepository.save(userEntity);
+        userJpaRepository.save(friendEntity);
+
+        UserAddFriendVo userAddFriendVo = new UserAddFriendVo();
+        userAddFriendVo.setId(id);
+        userAddFriendVo.setFriendId(friendId);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String json = objectMapper.writeValueAsString(userAddFriendVo);
+
+        mock.perform(put("/user/addfriend").contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status()
+                        .isAccepted());
+
+        Optional<UserEntity> userEntityOptional = userJpaRepository.findById(id);
+
+        assertThat(userEntityOptional).isPresent();
+
+        assertThat(userEntityOptional.get().getFriends().iterator().next().getId()).isEqualTo(friendId);
+
+        Optional<UserEntity> friendEntityOptional = userJpaRepository.findById(friendId);
+
+        assertThat(friendEntityOptional).isPresent();
+
+        assertThat(friendEntityOptional.get().getFriends().iterator().next().getId()).isEqualTo(id);
     }
 }

@@ -7,6 +7,8 @@ import de.renkensoftware.hbc.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class UserJpaAdapter implements UserOutgoingPort {
@@ -22,5 +24,10 @@ public class UserJpaAdapter implements UserOutgoingPort {
     @Override
     public User findByEmail(final String email) {
         return userEntityMapper.toUser(userJpaRepository.findByEmail(email).orElseThrow(UserNotFoundException::new));
+    }
+
+    @Override
+    public User findById(final UUID id) {
+        return userEntityMapper.toUser(userJpaRepository.findById(id).orElseThrow(UserNotFoundException::new));
     }
 }
