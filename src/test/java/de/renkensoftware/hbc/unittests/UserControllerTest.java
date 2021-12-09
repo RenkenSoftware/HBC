@@ -2,6 +2,7 @@ package de.renkensoftware.hbc.unittests;
 
 import de.renkensoftware.hbc.domain.user.application.UserController;
 import de.renkensoftware.hbc.domain.user.application.mapper.UserVoMapper;
+import de.renkensoftware.hbc.domain.user.application.viewobjects.UserAddFriendVo;
 import de.renkensoftware.hbc.domain.user.application.viewobjects.UserCreationVo;
 import de.renkensoftware.hbc.domain.user.application.viewobjects.UserIdVo;
 import de.renkensoftware.hbc.domain.user.core.model.User;
@@ -56,5 +57,21 @@ class UserControllerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(userIdVo);
+    }
+
+    @Test
+    void addFriend() {
+        UUID id = UUID.randomUUID();
+        UUID friendId = UUID.randomUUID();
+
+        UserAddFriendVo userAddFriendVo = new UserAddFriendVo();
+        userAddFriendVo.setId(id);
+        userAddFriendVo.setFriendId(friendId);
+
+        ResponseEntity<String> response = userController.addFriend(userAddFriendVo);
+
+        verify(userIncomingPort).addFriend(id, friendId);
+        
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
     }
 }

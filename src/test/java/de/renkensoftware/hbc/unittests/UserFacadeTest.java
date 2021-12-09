@@ -40,4 +40,25 @@ class UserFacadeTest {
 
         assertThat(userFacade.findByEmail(email)).isEqualTo(user);
     }
+
+    @Test
+    void addFriend() {
+        UUID id = UUID.randomUUID();
+        UUID friendId = UUID.randomUUID();
+
+        User user = new User(id, "email", "password", "name", Collections.emptyList());
+        User friend = new User(friendId, "friendemail",
+                "friendpassword", "friendname", Collections.emptyList());
+
+        when(userOutgoingPort.findById(id)).thenReturn(user);
+        when(userOutgoingPort.findById(friendId)).thenReturn(friend);
+
+        userFacade.addFriend(id, friendId);
+
+        assertThat(user.getFriendIds().iterator().next()).isEqualTo(friendId);
+        assertThat(friend.getFriendIds().iterator().next()).isEqualTo(id);
+
+        verify(userOutgoingPort).save(user);
+        verify(userOutgoingPort).save(friend);
+    }
 }
