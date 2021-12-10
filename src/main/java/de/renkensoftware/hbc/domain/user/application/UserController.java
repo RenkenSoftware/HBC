@@ -17,7 +17,7 @@ public class UserController {
     private final UserIncomingPort userIncomingPort;
     private final UserVoMapper userVoMapper;
 
-    @PostMapping("/user")
+    @PostMapping("/user/create")
     public ResponseEntity<String> create(@RequestBody final UserCreationVo userCreationVo) {
         userIncomingPort.save(userVoMapper.toUser(userCreationVo));
         return new ResponseEntity<>(HttpStatus.CREATED);

@@ -12,4 +12,9 @@ public class ExceptionController {
     public ResponseEntity<ResponseError> handleUserNotFoundException() {
         return new ResponseEntity<>(new ResponseError(1, "User not found"), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<ResponseError> handleInvalidPassword() {
+        return new ResponseEntity<>(new ResponseError(2, "Invalid password"), HttpStatus.NOT_ACCEPTABLE);
+    }
 }
