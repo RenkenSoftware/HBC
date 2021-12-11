@@ -22,4 +22,13 @@ class ExceptionControllerTest {
         assertThat(Objects.requireNonNull(response.getBody()).message()).isEqualTo("User not found");
         assertThat(response.getBody().code()).isEqualTo(1);
     }
+
+    @Test
+    void handleInvalidPasswordException() {
+        ResponseEntity<ResponseError> response = exceptionController.handleInvalidPasswordException();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_ACCEPTABLE);
+        assertThat(Objects.requireNonNull(response.getBody()).message()).isEqualTo("Invalid password");
+        assertThat(response.getBody().code()).isEqualTo(2);
+    }
 }

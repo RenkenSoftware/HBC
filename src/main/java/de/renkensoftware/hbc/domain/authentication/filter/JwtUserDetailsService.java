@@ -1,4 +1,4 @@
-package de.renkensoftware.hbc.config;
+package de.renkensoftware.hbc.domain.authentication.filter;
 
 import de.renkensoftware.hbc.domain.user.core.model.User;
 import de.renkensoftware.hbc.domain.user.core.ports.UserOutgoingPort;

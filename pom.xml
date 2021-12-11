@@ -96,11 +96,6 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>0.9.1</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -145,6 +140,8 @@
                 <configuration>
                     <excludes>
                         <exclude>de/renkensoftware/hbc/HbcApplication.class</exclude>
+                        <exclude>de/renkensoftware/hbc/config/*</exclude>
+                        <exclude>de/renkensoftware/hbc/domain/authentication/**/**/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -230,7 +227,10 @@
                 <configuration>
                     <timeoutConstant>10000</timeoutConstant>
                     <targetClasses>
-                        <param>de.renkensoftware.hbc.domain.*</param>
+                        <param>de.renkensoftware.hbc.domain.user.*</param>
+                        <param>de.renkensoftware.hbc.domain.room.*</param>
+                        <param>de.renkensoftware.hbc.domain.message.*</param>
+                        <param>de.renkensoftware.hbc.exception.*</param>
                     </targetClasses>
                     <excludedTestClasses>
                         <excludedTestClass>de.renkensoftware.hbc.integrationtests.*</excludedTestClass>

@@ -18,6 +18,7 @@ class MessageVoMapperTest {
     @Test
     void toMessage() {
         MessageCreationVo messageCreationVo = createMessageCreationVo();
+        messageCreationVo.setSenderId(USER_ID);
 
         Message message = messageVoMapper.toMessage(messageCreationVo);
 

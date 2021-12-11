@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static de.renkensoftware.hbc.testdatafactories.MessageTestDataFactory.*;
+import static de.renkensoftware.hbc.testdatafactories.MessageTestDataFactory.createMessageAtCreation;
+import static de.renkensoftware.hbc.testdatafactories.MessageTestDataFactory.createMessageCreationVo;
+import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.USER_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -35,8 +37,8 @@ class MessageControllerTest {
 
         ResponseEntity<String> response = messageController.create(messageCreationVo);
 
+        assertThat(messageCreationVo.getSenderId()).isEqualTo(USER_ID);
         verify(messageIncomingPort).save(message);
-
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 }

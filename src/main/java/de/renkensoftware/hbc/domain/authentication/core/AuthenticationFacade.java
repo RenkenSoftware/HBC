@@ -1,11 +1,11 @@
 package de.renkensoftware.hbc.domain.authentication.core;
 
+import de.renkensoftware.hbc.domain.authentication.InvalidPasswordException;
 import de.renkensoftware.hbc.domain.authentication.core.model.Authentication;
 import de.renkensoftware.hbc.domain.authentication.core.model.Token;
 import de.renkensoftware.hbc.domain.authentication.core.ports.AuthenticationIncomingPort;
 import de.renkensoftware.hbc.domain.user.core.model.User;
 import de.renkensoftware.hbc.domain.user.core.ports.UserOutgoingPort;
-import de.renkensoftware.hbc.exception.InvalidPasswordException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -14,7 +14,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 @Service

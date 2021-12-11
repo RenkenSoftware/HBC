@@ -1,6 +1,8 @@
 package de.renkensoftware.hbc.config;
 
 import de.renkensoftware.hbc.domain.authentication.filter.AuthenticationRequestFilter;
+import de.renkensoftware.hbc.domain.authentication.filter.JwtAuthenticationEntryPoint;
+import de.renkensoftware.hbc.domain.authentication.filter.JwtUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

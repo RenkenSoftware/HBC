@@ -6,10 +6,10 @@ import de.renkensoftware.hbc.domain.message.infrastructure.entity.MessageEntity;
 
 import java.util.UUID;
 
-import static de.renkensoftware.hbc.testdatafactories.RoomTestDataFactory.*;
 import static de.renkensoftware.hbc.testdatafactories.RoomTestDataFactory.ROOM_ID;
-import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.*;
+import static de.renkensoftware.hbc.testdatafactories.RoomTestDataFactory.createRoomEntity;
 import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.USER_ID;
+import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.createUserEntity;
 
 public abstract class MessageTestDataFactory {
 
@@ -18,7 +18,6 @@ public abstract class MessageTestDataFactory {
 
     public static MessageCreationVo createMessageCreationVo() {
         MessageCreationVo messageCreationVo = new MessageCreationVo();
-        messageCreationVo.setSenderId(USER_ID);
         messageCreationVo.setRoomId(ROOM_ID);
         messageCreationVo.setContent(CONTENT);
         return messageCreationVo;

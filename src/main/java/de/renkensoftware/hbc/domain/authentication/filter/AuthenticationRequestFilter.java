@@ -1,6 +1,5 @@
 package de.renkensoftware.hbc.domain.authentication.filter;
 
-import de.renkensoftware.hbc.config.JwtUserDetailsService;
 import de.renkensoftware.hbc.domain.authentication.core.ports.AuthenticationIncomingPort;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.NonNull;

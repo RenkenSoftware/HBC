@@ -1,5 +1,6 @@
 package de.renkensoftware.hbc.exception;
 
+import de.renkensoftware.hbc.domain.authentication.InvalidPasswordException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,7 +15,7 @@ public class ExceptionController {
     }
 
     @ExceptionHandler(InvalidPasswordException.class)
-    public ResponseEntity<ResponseError> handleInvalidPassword() {
+    public ResponseEntity<ResponseError> handleInvalidPasswordException() {
         return new ResponseEntity<>(new ResponseError(2, "Invalid password"), HttpStatus.NOT_ACCEPTABLE);
     }
 }

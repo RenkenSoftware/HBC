@@ -1,4 +1,4 @@
-package de.renkensoftware.hbc.config;
+package de.renkensoftware.hbc.domain.authentication.filter;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
