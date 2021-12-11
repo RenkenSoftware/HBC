@@ -26,11 +26,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.shaded.com.google.common.net.HttpHeaders;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
+import static de.renkensoftware.hbc.testdatafactories.AuthenticationTestDataFactory.createAuthenticationVo;
+import static de.renkensoftware.hbc.testdatafactories.MessageTestDataFactory.CONTENT;
+import static de.renkensoftware.hbc.testdatafactories.MessageTestDataFactory.createMessageCreationVo;
+import static de.renkensoftware.hbc.testdatafactories.RoomTestDataFactory.ROOM_ID;
+import static de.renkensoftware.hbc.testdatafactories.RoomTestDataFactory.createRoomEntity;
+import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.EMAIL;
+import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.createUserEntityWithoutFriend;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -66,17 +70,11 @@ class MessageIT extends DatabaseRelatedTest {
     }
 
     private String createTestTokenString() throws Exception {
-        UUID id = UUID.randomUUID();
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(id);
-        userEntity.setEmail("testmail");
-        userEntity.setPassword("testpassword");
+        UserEntity userEntity = createUserEntityWithoutFriend();
 
         userJpaRepository.save(userEntity);
 
-        AuthenticationVo authenticationVo = new AuthenticationVo();
-        authenticationVo.setEmail("testmail");
-        authenticationVo.setPassword("testpassword");
+        AuthenticationVo authenticationVo = createAuthenticationVo();
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -95,19 +93,11 @@ class MessageIT extends DatabaseRelatedTest {
     void createNewMessage() throws Exception {
         String tokenString = createTestTokenString();
 
-        Optional<UserEntity> userEntityOptional = userJpaRepository.findByEmail("testmail");
-
-        UUID roomId = UUID.randomUUID();
-        RoomEntity roomEntity = new RoomEntity();
-        roomEntity.setId(roomId);
-        assert userEntityOptional.orElse(null) != null;
-        roomEntity.setMembers(List.of(userEntityOptional.orElse(null)));
+        RoomEntity roomEntity = createRoomEntity();
 
         roomJpaRepository.save(roomEntity);
 
-        MessageCreationVo messageCreationVo = new MessageCreationVo();
-        messageCreationVo.setRoomId(roomId);
-        messageCreationVo.setContent("content");
+        MessageCreationVo messageCreationVo = createMessageCreationVo();
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -125,8 +115,8 @@ class MessageIT extends DatabaseRelatedTest {
         assertThat(messageEntityOptional).isPresent();
 
         assertThat(messageEntityOptional.get().getId()).isNotNull();
-        assertThat(messageEntityOptional.get().getSenderEntity().getEmail()).isEqualTo("testmail");
-        assertThat(messageEntityOptional.get().getRoomEntity().getId()).isEqualTo(roomId);
-        assertThat(messageEntityOptional.get().getContent()).isEqualTo("content");
+        assertThat(messageEntityOptional.get().getSenderEntity().getEmail()).isEqualTo(EMAIL);
+        assertThat(messageEntityOptional.get().getRoomEntity().getId()).isEqualTo(ROOM_ID);
+        assertThat(messageEntityOptional.get().getContent()).isEqualTo(CONTENT);
     }
 }

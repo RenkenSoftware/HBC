@@ -26,8 +26,9 @@ import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.shaded.com.google.common.net.HttpHeaders;
 
 import java.util.Optional;
-import java.util.UUID;
 
+import static de.renkensoftware.hbc.testdatafactories.AuthenticationTestDataFactory.createAuthenticationVo;
+import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -57,17 +58,11 @@ class UserIT extends DatabaseRelatedTest {
     }
 
     private String createTestTokenString() throws Exception {
-        UUID id = UUID.randomUUID();
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(id);
-        userEntity.setEmail("testmail");
-        userEntity.setPassword("testpassword");
+        UserEntity userEntity = createUserEntityWithoutFriend();
 
         userJpaRepository.save(userEntity);
 
-        AuthenticationVo authenticationVo = new AuthenticationVo();
-        authenticationVo.setEmail("testmail");
-        authenticationVo.setPassword("testpassword");
+        AuthenticationVo authenticationVo = createAuthenticationVo();
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -84,9 +79,7 @@ class UserIT extends DatabaseRelatedTest {
 
     @Test
     void createNewUser() throws Exception {
-        UserCreationVo userCreationVo = new UserCreationVo();
-        userCreationVo.setEmail("email");
-        userCreationVo.setPassword("password");
+        UserCreationVo userCreationVo = createUserCreationVo();
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -102,28 +95,18 @@ class UserIT extends DatabaseRelatedTest {
         assertThat(userEntityOptional).isPresent();
 
         assertThat(userEntityOptional.get().getId()).isNotNull();
-        assertThat(userEntityOptional.get().getEmail()).isEqualTo("email");
-        assertThat(userEntityOptional.get().getPassword()).isEqualTo("password");
+        assertThat(userEntityOptional.get().getEmail()).isEqualTo(EMAIL);
+        assertThat(userEntityOptional.get().getPassword()).isEqualTo(PASSWORD);
     }
 
     @Test
     void findUserIdByEmail() throws Exception {
         String tokenString = createTestTokenString();
 
-        UUID id = UUID.randomUUID();
-        String email = "email";
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(id);
-        userEntity.setEmail(email);
-        userEntity.setPassword("password");
-        userEntity.setName("name");
-
-        userJpaRepository.save(userEntity);
-
         MvcResult result = mock.perform(get("/user/email")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenString)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(email))
+                        .content(EMAIL))
                 .andExpect(status()
                         .isOk())
                 .andReturn();
@@ -134,7 +117,7 @@ class UserIT extends DatabaseRelatedTest {
 
         UserIdVo userIdVo = objectMapper.readValue(jsonResponse, UserIdVo.class);
 
-        assertThat(userIdVo.getId()).isEqualTo(id);
+        assertThat(userIdVo.getId()).isEqualTo(USER_ID);
     }
 
     @Test
@@ -144,7 +127,7 @@ class UserIT extends DatabaseRelatedTest {
         MvcResult result = mock.perform(get("/user/email")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenString)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("email"))
+                        .content("wrongemail"))
                 .andExpect(status()
                         .isNotFound())
                 .andReturn();
@@ -163,17 +146,9 @@ class UserIT extends DatabaseRelatedTest {
     void addFriend() throws Exception {
         String tokenString = createTestTokenString();
 
-        UUID friendId = UUID.randomUUID();
-        UserEntity friendEntity = new UserEntity();
-        friendEntity.setId(friendId);
-        friendEntity.setEmail("friendemail");
-        friendEntity.setPassword("friendpassword");
-        friendEntity.setName("friendname");
+        userJpaRepository.save(createFriendEntity());
 
-        userJpaRepository.save(friendEntity);
-
-        UserAddFriendVo userAddFriendVo = new UserAddFriendVo();
-        userAddFriendVo.setFriendId(friendId);
+        UserAddFriendVo userAddFriendVo = createUserAddFriendVo();
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -186,16 +161,16 @@ class UserIT extends DatabaseRelatedTest {
                 .andExpect(status()
                         .isAccepted());
 
-        Optional<UserEntity> userEntityOptional = userJpaRepository.findByEmail("testmail");
+        Optional<UserEntity> userEntityOptional = userJpaRepository.findById(USER_ID);
 
         assertThat(userEntityOptional).isPresent();
 
-        assertThat(userEntityOptional.get().getFriends().iterator().next().getId()).isEqualTo(friendId);
+        assertThat(userEntityOptional.get().getFriends().iterator().next().getId()).isEqualTo(FRIEND_ID);
 
-        Optional<UserEntity> friendEntityOptional = userJpaRepository.findById(friendId);
+        Optional<UserEntity> friendEntityOptional = userJpaRepository.findById(FRIEND_ID);
 
         assertThat(friendEntityOptional).isPresent();
 
-        assertThat(friendEntityOptional.get().getFriends().iterator().next().getEmail()).isEqualTo("testmail");
+        assertThat(friendEntityOptional.get().getFriends().iterator().next().getId()).isEqualTo(USER_ID);
     }
 }

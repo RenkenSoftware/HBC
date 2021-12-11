@@ -63,4 +63,22 @@ public abstract class UserTestDataFactory {
         friendEntity.setFriends(List.of(userEntity));
         return userEntity;
     }
+
+    public static UserEntity createUserEntityWithoutFriend() {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(USER_ID);
+        userEntity.setEmail(EMAIL);
+        userEntity.setPassword(PASSWORD);
+        userEntity.setName(NAME);
+        return userEntity;
+    }
+
+    public static UserEntity createFriendEntity() {
+        UserEntity friendEntity = new UserEntity();
+        friendEntity.setId(FRIEND_ID);
+        friendEntity.setEmail(FRIEND_EMAIL);
+        friendEntity.setPassword(FRIEND_PASSWORD);
+        friendEntity.setName(FRIEND_NAME);
+        return friendEntity;
+    }
 }

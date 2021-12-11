@@ -24,11 +24,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.shaded.com.google.common.net.HttpHeaders;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
+import static de.renkensoftware.hbc.testdatafactories.AuthenticationTestDataFactory.createAuthenticationVo;
+import static de.renkensoftware.hbc.testdatafactories.RoomTestDataFactory.createRoomCreationVo;
+import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.USER_ID;
+import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.createUserEntityWithoutFriend;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -61,17 +62,11 @@ class RoomIT extends DatabaseRelatedTest {
     }
 
     private String createTestTokenString() throws Exception {
-        UUID id = UUID.randomUUID();
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(id);
-        userEntity.setEmail("testmail");
-        userEntity.setPassword("testpassword");
+        UserEntity userEntity = createUserEntityWithoutFriend();
 
         userJpaRepository.save(userEntity);
 
-        AuthenticationVo authenticationVo = new AuthenticationVo();
-        authenticationVo.setEmail("testmail");
-        authenticationVo.setPassword("testpassword");
+        AuthenticationVo authenticationVo = createAuthenticationVo();
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -90,18 +85,7 @@ class RoomIT extends DatabaseRelatedTest {
     void createNewRoom() throws Exception {
         String tokenString = createTestTokenString();
 
-        UUID memberId = UUID.randomUUID();
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(memberId);
-        userEntity.setEmail("email");
-        userEntity.setPassword("password");
-        userEntity.setName("name");
-        userEntity.setFriends(Collections.emptyList());
-
-        userJpaRepository.save(userEntity);
-
-        RoomCreationVo roomCreationVo = new RoomCreationVo();
-        roomCreationVo.setMemberIds(List.of(memberId));
+        RoomCreationVo roomCreationVo = createRoomCreationVo();
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -119,7 +103,7 @@ class RoomIT extends DatabaseRelatedTest {
         assertThat(roomEntityOptional).isPresent();
 
         assertThat(roomEntityOptional.get().getId()).isNotNull();
-        assertThat(roomEntityOptional.get().getMembers().iterator().next().getId()).isEqualTo(memberId);
+        assertThat(roomEntityOptional.get().getMembers().iterator().next().getId()).isEqualTo(USER_ID);
     }
 
 }

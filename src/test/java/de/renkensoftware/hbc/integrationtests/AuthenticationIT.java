@@ -20,8 +20,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.UUID;
-
+import static de.renkensoftware.hbc.testdatafactories.AuthenticationTestDataFactory.createAuthenticationVo;
+import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.createUserEntityWithoutFriend;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -52,17 +52,11 @@ class AuthenticationIT extends DatabaseRelatedTest {
 
     @Test
     void authenticateUser() throws Exception {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(UUID.randomUUID());
-        userEntity.setEmail("email");
-        userEntity.setPassword("password");
-        userEntity.setName("name");
+        UserEntity userEntity = createUserEntityWithoutFriend();
 
         userJpaRepository.save(userEntity);
 
-        AuthenticationVo authenticationVo = new AuthenticationVo();
-        authenticationVo.setEmail("email");
-        authenticationVo.setPassword("password");
+        AuthenticationVo authenticationVo = createAuthenticationVo();
 
         ObjectMapper objectMapper = new ObjectMapper();
 
