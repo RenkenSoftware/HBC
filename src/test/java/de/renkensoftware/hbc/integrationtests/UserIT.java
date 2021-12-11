@@ -1,7 +1,8 @@
 package de.renkensoftware.hbc.integrationtests;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.renkensoftware.hbc.domain.authentication.application.viewobjects.AuthenticationVo;
+import de.renkensoftware.hbc.domain.authentication.application.viewobjects.TokenVo;
 import de.renkensoftware.hbc.domain.user.application.viewobjects.UserAddFriendVo;
 import de.renkensoftware.hbc.domain.user.application.viewobjects.UserCreationVo;
 import de.renkensoftware.hbc.domain.user.application.viewobjects.UserIdVo;
@@ -10,21 +11,25 @@ import de.renkensoftware.hbc.domain.user.infrastructure.entity.UserEntity;
 import de.renkensoftware.hbc.exception.ResponseError;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.testcontainers.shaded.com.google.common.net.HttpHeaders;
 
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ContextConfiguration
 @WebAppConfiguration
+@RunWith(SpringJUnit4ClassRunner.class)
 class UserIT extends DatabaseRelatedTest {
 
     @Autowired
@@ -46,7 +52,34 @@ class UserIT extends DatabaseRelatedTest {
     public void setup() {
         mock = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
+                .apply(springSecurity())
                 .build();
+    }
+
+    private String createTestTokenString() throws Exception {
+        UUID id = UUID.randomUUID();
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(id);
+        userEntity.setEmail("testmail");
+        userEntity.setPassword("testpassword");
+
+        userJpaRepository.save(userEntity);
+
+        AuthenticationVo authenticationVo = new AuthenticationVo();
+        authenticationVo.setEmail("testmail");
+        authenticationVo.setPassword("testpassword");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String json = objectMapper.writeValueAsString(authenticationVo);
+
+        MvcResult result = mock.perform(post("/authenticate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+        return objectMapper.readValue(response, TokenVo.class).getTokenString();
     }
 
     @Test
@@ -59,7 +92,7 @@ class UserIT extends DatabaseRelatedTest {
 
         String json = objectMapper.writeValueAsString(userCreationVo);
 
-        mock.perform(post("/user").contentType(MediaType.APPLICATION_JSON)
+        mock.perform(post("/user/create").contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status()
                         .isCreated());
@@ -75,6 +108,8 @@ class UserIT extends DatabaseRelatedTest {
 
     @Test
     void findUserIdByEmail() throws Exception {
+        String tokenString = createTestTokenString();
+
         UUID id = UUID.randomUUID();
         String email = "email";
         UserEntity userEntity = new UserEntity();
@@ -85,7 +120,9 @@ class UserIT extends DatabaseRelatedTest {
 
         userJpaRepository.save(userEntity);
 
-        MvcResult result = mock.perform(get("/user/email").contentType(MediaType.APPLICATION_JSON)
+        MvcResult result = mock.perform(get("/user/email")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenString)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(email))
                 .andExpect(status()
                         .isOk())
@@ -102,7 +139,11 @@ class UserIT extends DatabaseRelatedTest {
 
     @Test
     void findUserIdByNonExistingEmailThrowsException() throws Exception {
-        MvcResult result = mock.perform(get("/user/email").contentType(MediaType.APPLICATION_JSON)
+        String tokenString = createTestTokenString();
+
+        MvcResult result = mock.perform(get("/user/email")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenString)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content("email"))
                 .andExpect(status()
                         .isNotFound())
@@ -120,12 +161,7 @@ class UserIT extends DatabaseRelatedTest {
 
     @Test
     void addFriend() throws Exception {
-        UUID id = UUID.randomUUID();
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(id);
-        userEntity.setEmail("email");
-        userEntity.setPassword("password");
-        userEntity.setName("name");
+        String tokenString = createTestTokenString();
 
         UUID friendId = UUID.randomUUID();
         UserEntity friendEntity = new UserEntity();
@@ -134,23 +170,23 @@ class UserIT extends DatabaseRelatedTest {
         friendEntity.setPassword("friendpassword");
         friendEntity.setName("friendname");
 
-        userJpaRepository.save(userEntity);
         userJpaRepository.save(friendEntity);
 
         UserAddFriendVo userAddFriendVo = new UserAddFriendVo();
-        userAddFriendVo.setId(id);
         userAddFriendVo.setFriendId(friendId);
 
         ObjectMapper objectMapper = new ObjectMapper();
 
         String json = objectMapper.writeValueAsString(userAddFriendVo);
 
-        mock.perform(put("/user/addfriend").contentType(MediaType.APPLICATION_JSON)
+        mock.perform(put("/user/addfriend")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenString)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status()
                         .isAccepted());
 
-        Optional<UserEntity> userEntityOptional = userJpaRepository.findById(id);
+        Optional<UserEntity> userEntityOptional = userJpaRepository.findByEmail("testmail");
 
         assertThat(userEntityOptional).isPresent();
 
@@ -160,6 +196,6 @@ class UserIT extends DatabaseRelatedTest {
 
         assertThat(friendEntityOptional).isPresent();
 
-        assertThat(friendEntityOptional.get().getFriends().iterator().next().getId()).isEqualTo(id);
+        assertThat(friendEntityOptional.get().getFriends().iterator().next().getEmail()).isEqualTo("testmail");
     }
 }

@@ -9,8 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
 
+import static de.renkensoftware.hbc.testdatafactories.MessageTestDataFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -18,21 +19,18 @@ class MessageControllerTest {
 
     private final MessageIncomingPort messageIncomingPort = mock(MessageIncomingPort.class);
     private final MessageVoMapper messageVoMapper = mock(MessageVoMapper.class);
+    private final HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
 
-    private final MessageController messageController = new MessageController(messageIncomingPort, messageVoMapper);
+    private final MessageController messageController =
+            new MessageController(messageIncomingPort, messageVoMapper, httpServletRequest);
 
     @Test
     void create() {
-        UUID senderId = UUID.randomUUID();
-        UUID roomId = UUID.randomUUID();
+        MessageCreationVo messageCreationVo = createMessageCreationVo();
 
-        MessageCreationVo messageCreationVo = new MessageCreationVo();
-        messageCreationVo.setSenderId(senderId);
-        messageCreationVo.setRoomId(roomId);
-        messageCreationVo.setContent("content");
+        Message message = createMessageAtCreation();
 
-        Message message = new Message(senderId, roomId, "content");
-
+        when(httpServletRequest.getRemoteUser()).thenReturn(message.getSenderId().toString());
         when(messageVoMapper.toMessage(messageCreationVo)).thenReturn(message);
 
         ResponseEntity<String> response = messageController.create(messageCreationVo);

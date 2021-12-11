@@ -10,12 +10,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserIncomingPort userIncomingPort;
     private final UserVoMapper userVoMapper;
+
+    private final HttpServletRequest httpServletRequest;
 
     @PostMapping("/user/create")
     public ResponseEntity<String> create(@RequestBody final UserCreationVo userCreationVo) {
@@ -31,7 +36,7 @@ public class UserController {
 
     @PutMapping("/user/addfriend")
     public ResponseEntity<String> addFriend(@RequestBody final UserAddFriendVo userAddFriendVo) {
-        userIncomingPort.addFriend(userAddFriendVo.getId(), userAddFriendVo.getFriendId());
+        userIncomingPort.addFriend(UUID.fromString(httpServletRequest.getRemoteUser()), userAddFriendVo.getFriendId());
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }

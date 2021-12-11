@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
+import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -48,29 +49,26 @@ class UserJpaAdapterTest {
 
     @Test
     void findByEmail() {
-        String email = "email";
-        UUID id = UUID.randomUUID();
+        UserEntity userEntity = createUserEntity();
 
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(id);
-        userEntity.setEmail(email);
-        userEntity.setPassword("password");
-        userEntity.setName("name");
+        User user = createUser();
 
-        User user = new User(id, email, "password", "name", Collections.emptyList());
-
-        when(userJpaRepository.findByEmail(email)).thenReturn(Optional.of(userEntity));
+        when(userJpaRepository.findByEmail(EMAIL)).thenReturn(Optional.of(userEntity));
         when(userEntityMapper.toUser(userEntity)).thenReturn(user);
 
-        assertThat(userJpaAdapter.findByEmail(email)).isEqualTo(user);
+        assertThat(userJpaAdapter.findByEmail(EMAIL)).isEqualTo(user);
     }
 
     @Test
     void findByEmailWithoutResult() {
-        String email = "email";
 
-        when(userJpaRepository.findByEmail(email)).thenReturn(Optional.empty());
+        when(userJpaRepository.findByEmail(EMAIL)).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> userJpaAdapter.findByEmail(email));
+        assertThrows(UserNotFoundException.class, () -> userJpaAdapter.findByEmail(EMAIL));
+    }
+
+    @Test
+    void findById() {
+
     }
 }

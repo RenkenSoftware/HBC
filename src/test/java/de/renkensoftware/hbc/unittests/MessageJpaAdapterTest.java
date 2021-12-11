@@ -7,8 +7,8 @@ import de.renkensoftware.hbc.domain.message.infrastructure.entity.MessageEntity;
 import de.renkensoftware.hbc.domain.message.infrastructure.mapper.MessageEntityMapper;
 import org.junit.jupiter.api.Test;
 
-import java.util.UUID;
-
+import static de.renkensoftware.hbc.testdatafactories.MessageTestDataFactory.createMessage;
+import static de.renkensoftware.hbc.testdatafactories.MessageTestDataFactory.createMessageEntity;
 import static org.mockito.Mockito.*;
 
 class MessageJpaAdapterTest {
@@ -21,12 +21,9 @@ class MessageJpaAdapterTest {
 
     @Test
     void save() {
-        UUID messageId = UUID.randomUUID();
-        UUID roomId = UUID.randomUUID();
-        UUID senderId = UUID.randomUUID();
+        Message message = createMessage();
 
-        Message message = new Message(messageId, senderId, roomId, "content");
-        MessageEntity messageEntity = new MessageEntity();
+        MessageEntity messageEntity = createMessageEntity();
 
         when(messageEntityMapper.toEntity(message)).thenReturn(messageEntity);
 

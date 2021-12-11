@@ -5,10 +5,7 @@ import de.renkensoftware.hbc.domain.room.application.viewobjects.RoomCreationVo;
 import de.renkensoftware.hbc.domain.room.core.model.Room;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-
+import static de.renkensoftware.hbc.testdatafactories.RoomTestDataFactory.createRoomCreationVo;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class RoomVoMapperTest {
@@ -17,10 +14,7 @@ class RoomVoMapperTest {
 
     @Test
     void toRoom() {
-        Collection<UUID> memberIds = List.of(UUID.randomUUID());
-
-        RoomCreationVo roomCreationVo = new RoomCreationVo();
-        roomCreationVo.setMemberIds(memberIds);
+        RoomCreationVo roomCreationVo = createRoomCreationVo();
 
         Room room = roomVoMapper.toRoom(roomCreationVo);
 

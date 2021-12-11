@@ -5,9 +5,7 @@ import de.renkensoftware.hbc.domain.message.core.model.Message;
 import de.renkensoftware.hbc.domain.message.core.ports.MessageOutgoingPort;
 import org.junit.jupiter.api.Test;
 
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static de.renkensoftware.hbc.testdatafactories.MessageTestDataFactory.createMessage;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -19,7 +17,7 @@ class MessageFacadeTest {
 
     @Test
     void save() {
-        Message message = new Message(UUID.randomUUID(), UUID.randomUUID(), "content");
+        Message message = createMessage();
 
         messageFacade.save(message);
 

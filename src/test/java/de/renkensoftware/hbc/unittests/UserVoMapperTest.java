@@ -6,11 +6,8 @@ import de.renkensoftware.hbc.domain.user.application.viewobjects.UserIdVo;
 import de.renkensoftware.hbc.domain.user.core.model.User;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.UUID;
-
+import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserVoMapperTest {
 
@@ -18,24 +15,18 @@ class UserVoMapperTest {
 
     @Test
     void toUser() {
-        UserCreationVo userCreationVo = new UserCreationVo();
-        userCreationVo.setEmail("email");
-        userCreationVo.setPassword("password");
+        UserCreationVo userCreationVo = createUserCreationVo();
 
         User user = userVoMapper.toUser(userCreationVo);
 
         assertThat(user.getId()).isNotNull();
-        assertThat(user.getEmail()).isEqualTo("email");
-        assertThat(user.getPassword()).isEqualTo("password");
+        assertThat(user.getEmail()).isEqualTo(EMAIL);
+        assertThat(user.getPassword()).isEqualTo(PASSWORD);
     }
 
     @Test
     void toIdVo() {
-        User user = new User(UUID.randomUUID(),
-                "email",
-                "password",
-                "name",
-                Collections.emptyList());
+        User user = createUser();
 
         UserIdVo userIdVo = userVoMapper.toIdVo(user);
 

@@ -9,7 +9,5 @@ import java.util.UUID;
 @Setter
 public class UserAddFriendVo {
 
-    private UUID id;
-
     private UUID friendId;
 }

@@ -11,27 +11,26 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Collections;
-import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
 
+import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class UserControllerTest {
 
     private final UserIncomingPort userIncomingPort = mock(UserIncomingPort.class);
     private final UserVoMapper userVoMapper = mock(UserVoMapper.class);
+    private final HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
 
-    private final UserController userController = new UserController(userIncomingPort, userVoMapper);
+    private final UserController userController =
+            new UserController(userIncomingPort, userVoMapper, httpServletRequest);
 
     @Test
     void create() {
-        UserCreationVo userCreationVo = new UserCreationVo();
-        userCreationVo.setEmail("email");
-        userCreationVo.setPassword("password");
+        UserCreationVo userCreationVo = createUserCreationVo();
 
-        User user = new User("email", "password");
+        User user = createUserAtCreation();
 
         when(userVoMapper.toUser(userCreationVo)).thenReturn(user);
 
@@ -44,16 +43,13 @@ class UserControllerTest {
 
     @Test
     void findByEmail() {
-        UUID id = UUID.randomUUID();
-        String email = "email";
-        User user = new User(id, email, "password", "name", Collections.emptyList());
-        UserIdVo userIdVo = new UserIdVo();
-        userIdVo.setId(id);
+        User user = createUser();
+        UserIdVo userIdVo = createUserIdVo();
 
-        when(userIncomingPort.findByEmail(email)).thenReturn(user);
+        when(userIncomingPort.findByEmail(EMAIL)).thenReturn(user);
         when(userVoMapper.toIdVo(user)).thenReturn(userIdVo);
 
-        ResponseEntity<UserIdVo> response = userController.findByEmail(email);
+        ResponseEntity<UserIdVo> response = userController.findByEmail(EMAIL);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(userIdVo);
@@ -61,17 +57,14 @@ class UserControllerTest {
 
     @Test
     void addFriend() {
-        UUID id = UUID.randomUUID();
-        UUID friendId = UUID.randomUUID();
+        UserAddFriendVo userAddFriendVo = createUserAddFriendVo();
 
-        UserAddFriendVo userAddFriendVo = new UserAddFriendVo();
-        userAddFriendVo.setId(id);
-        userAddFriendVo.setFriendId(friendId);
+        when(httpServletRequest.getRemoteUser()).thenReturn(USER_ID.toString());
 
         ResponseEntity<String> response = userController.addFriend(userAddFriendVo);
 
-        verify(userIncomingPort).addFriend(id, friendId);
-        
+        verify(userIncomingPort).addFriend(USER_ID, FRIEND_ID);
+
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
     }
 }

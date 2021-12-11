@@ -14,10 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
@@ -80,7 +77,9 @@ public class AuthenticationFacade implements AuthenticationIncomingPort {
     private String generateTokenString(final String email) {
         Map<String, Object> claims = new HashMap<>();
 
-        return Jwts.builder().setClaims(claims).setSubject(email).setIssuedAt(new Date(System.currentTimeMillis()))
+        String idString = userOutgoingPort.findByEmail(email).getId().toString();
+
+        return Jwts.builder().setClaims(claims).setSubject(idString).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }

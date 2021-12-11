@@ -3,18 +3,17 @@ package de.renkensoftware.hbc.unittests;
 import de.renkensoftware.hbc.domain.room.core.model.Room;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
+import static de.renkensoftware.hbc.testdatafactories.RoomTestDataFactory.ROOM_ID;
+import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.USER_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class RoomTest {
 
     @Test
-    void RoomConstructor1() {
-        Collection<UUID> memberIds = List.of(UUID.randomUUID());
+    void RoomConstructor() {
+        Collection<UUID> memberIds = List.of(USER_ID);
 
         Room room = new Room(memberIds);
 
@@ -23,23 +22,11 @@ class RoomTest {
     }
 
     @Test
-    void RoomConstructor2() {
-        Collection<UUID> memberIds = List.of(UUID.randomUUID());
-        UUID id = UUID.randomUUID();
-
-        Room room = new Room(id, memberIds);
-
-        assertThat(room.getId()).isEqualTo(id);
-        assertThat(room.getMemberIds()).hasSize(1);
-    }
-
-    @Test
     void addMemberId() {
-        Room room = new Room(UUID.randomUUID(), Collections.emptyList());
-        UUID memberId = UUID.randomUUID();
+        Room room = new Room(ROOM_ID, new ArrayList<>());
 
-        room.addMemberId(memberId);
+        room.addMemberId(USER_ID);
 
-        assertThat(room.getMemberIds().iterator().next()).isEqualTo(memberId);
+        assertThat(room.getMemberIds().iterator().next()).isEqualTo(USER_ID);
     }
 }

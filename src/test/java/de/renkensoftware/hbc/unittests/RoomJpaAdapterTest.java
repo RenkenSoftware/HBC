@@ -7,10 +7,8 @@ import de.renkensoftware.hbc.domain.room.infrastructure.entity.RoomEntity;
 import de.renkensoftware.hbc.domain.room.infrastructure.mapper.RoomEntityMapper;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static de.renkensoftware.hbc.testdatafactories.RoomTestDataFactory.createRoom;
+import static de.renkensoftware.hbc.testdatafactories.RoomTestDataFactory.createRoomEntity;
 import static org.mockito.Mockito.*;
 
 class RoomJpaAdapterTest {
@@ -22,12 +20,8 @@ class RoomJpaAdapterTest {
 
     @Test
     void save() {
-        UUID id = UUID.randomUUID();
-
-        Room room = new Room(id, Collections.emptyList());
-        RoomEntity roomEntity = new RoomEntity();
-        roomEntity.setId(id);
-        roomEntity.setMembers(Collections.emptyList());
+        Room room = createRoom();
+        RoomEntity roomEntity = createRoomEntity();
 
         when(roomEntityMapper.toEntity(room)).thenReturn(roomEntity);
 

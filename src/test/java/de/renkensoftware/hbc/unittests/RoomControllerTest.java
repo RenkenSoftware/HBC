@@ -9,12 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-
+import static de.renkensoftware.hbc.testdatafactories.RoomTestDataFactory.createRoomAtCreation;
+import static de.renkensoftware.hbc.testdatafactories.RoomTestDataFactory.createRoomCreationVo;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class RoomControllerTest {
@@ -26,11 +23,9 @@ class RoomControllerTest {
 
     @Test
     void create() {
-        Collection<UUID> memberIds = List.of(UUID.randomUUID());
+        RoomCreationVo roomCreationVo = createRoomCreationVo();
 
-        RoomCreationVo roomCreationVo = new RoomCreationVo();
-        roomCreationVo.setMemberIds(memberIds);
-        Room room = new Room(memberIds);
+        Room room = createRoomAtCreation();
 
         when(roomVoMapper.toRoom(roomCreationVo)).thenReturn(room);
 
