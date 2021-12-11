@@ -8,9 +8,7 @@ import de.renkensoftware.hbc.domain.user.infrastructure.mapper.UserEntityMapper;
 import de.renkensoftware.hbc.exception.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.Optional;
-import java.util.UUID;
 
 import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,19 +24,9 @@ class UserJpaAdapterTest {
 
     @Test
     void save() {
-        UUID id = UUID.randomUUID();
-        User user = new User(id,
-                "email",
-                "password",
-                "name",
-                Collections.emptyList());
+        User user = createUserWithoutFriend();
 
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(id);
-        userEntity.setName("name");
-        userEntity.setPassword("password");
-        userEntity.setEmail("email");
-        userEntity.setFriends(Collections.emptyList());
+        UserEntity userEntity = createUserEntityWithoutFriend();
 
         when(userEntityMapper.toEntity(user)).thenReturn(userEntity);
 
@@ -69,6 +57,21 @@ class UserJpaAdapterTest {
 
     @Test
     void findById() {
+        UserEntity userEntity = createUserEntity();
 
+        User user = createUser();
+
+        when(userJpaRepository.findById(USER_ID)).thenReturn(Optional.of(userEntity));
+        when(userEntityMapper.toUser(userEntity)).thenReturn(user);
+
+        assertThat(userJpaAdapter.findById(USER_ID)).isEqualTo(user);
+    }
+
+    @Test
+    void findByIdWithoutResult() {
+
+        when(userJpaRepository.findById(USER_ID)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userJpaAdapter.findById(USER_ID));
     }
 }

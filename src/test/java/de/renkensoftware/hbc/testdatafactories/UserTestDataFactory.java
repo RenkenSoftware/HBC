@@ -6,6 +6,7 @@ import de.renkensoftware.hbc.domain.user.application.viewobjects.UserIdVo;
 import de.renkensoftware.hbc.domain.user.core.model.User;
 import de.renkensoftware.hbc.domain.user.infrastructure.entity.UserEntity;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,6 +47,10 @@ public abstract class UserTestDataFactory {
 
     public static User createUser() {
         return new User(USER_ID, EMAIL, PASSWORD, NAME, List.of(FRIEND_ID));
+    }
+
+    public static User createUserWithoutFriend() {
+        return new User(USER_ID, EMAIL, PASSWORD, NAME, Collections.emptyList());
     }
 
     public static UserEntity createUserEntity() {
