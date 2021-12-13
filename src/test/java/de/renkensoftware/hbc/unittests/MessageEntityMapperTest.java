@@ -43,4 +43,16 @@ class MessageEntityMapperTest {
         assertThat(messageEntity.getSenderEntity().getId()).isEqualTo(USER_ID);
         assertThat(messageEntity.getContent()).isEqualTo(CONTENT);
     }
+
+    @Test
+    void toMessage() {
+        MessageEntity messageEntity = createMessageEntity();
+
+        Message message = messageEntityMapper.toMessage(messageEntity);
+
+        assertThat(message.getId()).isEqualTo(messageEntity.getId());
+        assertThat(message.getSenderId()).isEqualTo(messageEntity.getSenderEntity().getId());
+        assertThat(message.getRoomId()).isEqualTo(messageEntity.getRoomEntity().getId());
+        assertThat(message.getContent()).isEqualTo(messageEntity.getContent());
+    }
 }

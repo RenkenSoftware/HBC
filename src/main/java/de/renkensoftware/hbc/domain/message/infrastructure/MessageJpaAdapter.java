@@ -6,6 +6,9 @@ import de.renkensoftware.hbc.domain.message.infrastructure.mapper.MessageEntityM
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class MessageJpaAdapter implements MessageOutgoingPort {
@@ -16,5 +19,12 @@ public class MessageJpaAdapter implements MessageOutgoingPort {
     @Override
     public void save(final Message message) {
         messageJpaRepository.save(messageEntityMapper.toEntity(message));
+    }
+
+    @Override
+    public List<Message> findAllByRoomId(final UUID roomId) {
+        return messageJpaRepository.findAllByRoomEntity_Id(roomId).stream()
+                .map(messageEntityMapper::toMessage)
+                .toList();
     }
 }

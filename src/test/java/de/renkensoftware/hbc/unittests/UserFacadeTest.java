@@ -50,4 +50,13 @@ class UserFacadeTest {
         verify(userOutgoingPort).save(user);
         verify(userOutgoingPort).save(friend);
     }
+
+    @Test
+    void findById() {
+        User user = createUser();
+
+        when(userOutgoingPort.findById(USER_ID)).thenReturn(user);
+
+        assertThat(userFacade.findById(USER_ID)).isEqualTo(user);
+    }
 }

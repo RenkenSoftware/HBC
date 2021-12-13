@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.USER_ID;
-import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.createUserEntity;
+import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.createUserEntityWithoutFriend;
 
 public abstract class RoomTestDataFactory {
 
@@ -31,7 +31,7 @@ public abstract class RoomTestDataFactory {
     public static RoomEntity createRoomEntity() {
         RoomEntity roomEntity = new RoomEntity();
         roomEntity.setId(ROOM_ID);
-        roomEntity.setMembers(List.of(createUserEntity()));
+        roomEntity.setMembers(List.of(createUserEntityWithoutFriend()));
         return roomEntity;
     }
 }

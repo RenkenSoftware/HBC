@@ -20,6 +20,11 @@ public class UserFacade implements UserIncomingPort {
     }
 
     @Override
+    public User findById(UUID id) {
+        return userOutgoingPort.findById(id);
+    }
+
+    @Override
     public User findByEmail(final String email) {
         return userOutgoingPort.findByEmail(email);
     }

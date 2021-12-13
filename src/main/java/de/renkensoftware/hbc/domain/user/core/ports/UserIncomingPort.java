@@ -8,6 +8,8 @@ public interface UserIncomingPort {
 
     void save(final User user);
 
+    User findById(final UUID id);
+
     User findByEmail(final String email);
 
     void addFriend(final UUID id, final UUID friendId);

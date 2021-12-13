@@ -7,8 +7,12 @@ import de.renkensoftware.hbc.domain.message.infrastructure.entity.MessageEntity;
 import de.renkensoftware.hbc.domain.message.infrastructure.mapper.MessageEntityMapper;
 import org.junit.jupiter.api.Test;
 
-import static de.renkensoftware.hbc.testdatafactories.MessageTestDataFactory.createMessage;
-import static de.renkensoftware.hbc.testdatafactories.MessageTestDataFactory.createMessageEntity;
+import java.util.List;
+
+import static de.renkensoftware.hbc.testdatafactories.MessageTestDataFactory.*;
+import static de.renkensoftware.hbc.testdatafactories.RoomTestDataFactory.ROOM_ID;
+import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.USER_ID;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 class MessageJpaAdapterTest {
@@ -30,5 +34,22 @@ class MessageJpaAdapterTest {
         messageJpaAdapter.save(message);
 
         verify(messageJpaRepository).save(messageEntity);
+    }
+
+    @Test
+    void findAllByRoomId() {
+        Message message = createMessage();
+        MessageEntity messageEntity = createMessageEntity();
+
+        when(messageEntityMapper.toMessage(messageEntity)).thenReturn(message);
+        when(messageJpaRepository.findAllByRoomEntity_Id(ROOM_ID)).thenReturn(List.of(messageEntity));
+
+        List<Message> messageList = messageJpaAdapter.findAllByRoomId(ROOM_ID);
+
+        assertThat(messageList).hasSize(1);
+        assertThat(messageList.get(0).getId()).isEqualTo(MESSAGE_ID);
+        assertThat(messageList.get(0).getSenderId()).isEqualTo(USER_ID);
+        assertThat(messageList.get(0).getRoomId()).isEqualTo(ROOM_ID);
+        assertThat(messageList.get(0).getContent()).isEqualTo(CONTENT);
     }
 }

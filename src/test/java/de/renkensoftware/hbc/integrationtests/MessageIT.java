@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.renkensoftware.hbc.domain.authentication.application.viewobjects.AuthenticationVo;
 import de.renkensoftware.hbc.domain.authentication.application.viewobjects.TokenVo;
 import de.renkensoftware.hbc.domain.message.application.viewobjects.MessageCreationVo;
+import de.renkensoftware.hbc.domain.message.application.viewobjects.MessagePresentationVo;
 import de.renkensoftware.hbc.domain.message.infrastructure.MessageJpaRepository;
 import de.renkensoftware.hbc.domain.message.infrastructure.entity.MessageEntity;
 import de.renkensoftware.hbc.domain.room.infrastructure.RoomJpaRepository;
@@ -26,17 +27,18 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.shaded.com.google.common.net.HttpHeaders;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static de.renkensoftware.hbc.testdatafactories.AuthenticationTestDataFactory.createAuthenticationVo;
-import static de.renkensoftware.hbc.testdatafactories.MessageTestDataFactory.CONTENT;
-import static de.renkensoftware.hbc.testdatafactories.MessageTestDataFactory.createMessageCreationVo;
+import static de.renkensoftware.hbc.testdatafactories.MessageTestDataFactory.*;
 import static de.renkensoftware.hbc.testdatafactories.RoomTestDataFactory.ROOM_ID;
 import static de.renkensoftware.hbc.testdatafactories.RoomTestDataFactory.createRoomEntity;
-import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.EMAIL;
-import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.createUserEntityWithoutFriend;
+import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -118,5 +120,44 @@ class MessageIT extends DatabaseRelatedTest {
         assertThat(messageEntityOptional.get().getSenderEntity().getEmail()).isEqualTo(EMAIL);
         assertThat(messageEntityOptional.get().getRoomEntity().getId()).isEqualTo(ROOM_ID);
         assertThat(messageEntityOptional.get().getContent()).isEqualTo(CONTENT);
+    }
+
+    @Test
+    void getMessagesByRoomId() throws Exception {
+        String tokenString = createTestTokenString();
+
+        RoomEntity roomEntity = createRoomEntity();
+
+        roomJpaRepository.save(roomEntity);
+
+        UserEntity userEntity = createUserEntityWithoutFriend();
+
+        userJpaRepository.save(userEntity);
+
+        MessageEntity messageEntity = createMessageEntity();
+
+        messageJpaRepository.save(messageEntity);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String json = objectMapper.writeValueAsString(ROOM_ID);
+
+        MvcResult result = mock.perform(get("/message/room")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenString)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status()
+                        .isOk())
+                .andReturn();
+
+        json = result.getResponse().getContentAsString();
+
+        List<MessagePresentationVo> messagePresentationVoList =
+                Arrays.asList(objectMapper.readValue(json, MessagePresentationVo[].class));
+
+        assertThat(messagePresentationVoList).hasSize(1);
+        assertThat(messagePresentationVoList.get(0).getId()).isEqualTo(MESSAGE_ID);
+        assertThat(messagePresentationVoList.get(0).getSenderName()).isEqualTo(NAME);
+        assertThat(messagePresentationVoList.get(0).getContent()).isEqualTo(CONTENT);
     }
 }

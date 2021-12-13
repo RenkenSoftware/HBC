@@ -22,4 +22,11 @@ public class MessageEntityMapper {
         messageEntity.setSenderEntity(userJpaRepository.getById(message.getSenderId()));
         return messageEntity;
     }
+
+    public Message toMessage(final MessageEntity messageEntity) {
+        return new Message(messageEntity.getId(),
+                messageEntity.getSenderEntity().getId(),
+                messageEntity.getRoomEntity().getId(),
+                messageEntity.getContent());
+    }
 }
