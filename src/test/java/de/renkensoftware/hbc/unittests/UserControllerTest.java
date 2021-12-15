@@ -36,7 +36,7 @@ class UserControllerTest {
 
         ResponseEntity<String> response = userController.create(userCreationVo);
 
-        verify(userIncomingPort).save(user);
+        verify(userIncomingPort).create(user);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }

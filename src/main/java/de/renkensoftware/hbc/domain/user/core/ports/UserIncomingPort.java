@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public interface UserIncomingPort {
 
-    void save(final User user);
+    void create(final User user);
 
     User findById(final UUID id);
 

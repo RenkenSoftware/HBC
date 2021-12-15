@@ -18,4 +18,9 @@ public class ExceptionController {
     public ResponseEntity<ResponseError> handleInvalidPasswordException() {
         return new ResponseEntity<>(new ResponseError(2, "Invalid password"), HttpStatus.NOT_ACCEPTABLE);
     }
+
+    @ExceptionHandler(EmailAlreadyRegisteredException.class)
+    public ResponseEntity<ResponseError> handleEmailAlreadyRegisteredException() {
+        return new ResponseEntity<>(new ResponseError(3, "Email already registered"), HttpStatus.NOT_ACCEPTABLE);
+    }
 }

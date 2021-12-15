@@ -1,7 +1,7 @@
 package de.renkensoftware.hbc.domain.authentication.filter;
 
 import de.renkensoftware.hbc.domain.user.core.model.User;
-import de.renkensoftware.hbc.domain.user.core.ports.UserOutgoingPort;
+import de.renkensoftware.hbc.domain.user.core.ports.UserIncomingPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,11 +14,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class JwtUserDetailsService implements UserDetailsService {
 
-    private final UserOutgoingPort userOutgoingPort;
+    private final UserIncomingPort userIncomingPort;
 
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-        User user = userOutgoingPort.findById(UUID.fromString(id));
+        User user = userIncomingPort.findById(UUID.fromString(id));
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getId().toString())

@@ -5,7 +5,7 @@ import de.renkensoftware.hbc.domain.authentication.core.model.Authentication;
 import de.renkensoftware.hbc.domain.authentication.core.model.Token;
 import de.renkensoftware.hbc.domain.authentication.core.ports.AuthenticationIncomingPort;
 import de.renkensoftware.hbc.domain.user.core.model.User;
-import de.renkensoftware.hbc.domain.user.core.ports.UserOutgoingPort;
+import de.renkensoftware.hbc.domain.user.core.ports.UserIncomingPort;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -24,7 +24,7 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class AuthenticationFacade implements AuthenticationIncomingPort {
 
-    private final UserOutgoingPort userOutgoingPort;
+    private final UserIncomingPort userIncomingPort;
 
     public static final long JWT_TOKEN_VALIDITY = 5L * 60L * 60L;
 
@@ -70,7 +70,7 @@ public class AuthenticationFacade implements AuthenticationIncomingPort {
     }
 
     private void authenticate(final Authentication authentication) {
-        User user = userOutgoingPort.findByEmail(authentication.getEmail());
+        User user = userIncomingPort.findByEmail(authentication.getEmail());
 
         if (!Objects.equals(user.getPassword(), authentication.getPassword())) {
             throw new InvalidPasswordException();
@@ -80,7 +80,7 @@ public class AuthenticationFacade implements AuthenticationIncomingPort {
     private String generateTokenString(final String email) {
         Map<String, Object> claims = new HashMap<>();
 
-        String idString = userOutgoingPort.findByEmail(email).getId().toString();
+        String idString = userIncomingPort.findByEmail(email).getId().toString();
 
         return Jwts.builder().setClaims(claims).setSubject(idString).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))

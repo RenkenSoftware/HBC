@@ -5,14 +5,12 @@ import de.renkensoftware.hbc.domain.user.infrastructure.UserJpaAdapter;
 import de.renkensoftware.hbc.domain.user.infrastructure.UserJpaRepository;
 import de.renkensoftware.hbc.domain.user.infrastructure.entity.UserEntity;
 import de.renkensoftware.hbc.domain.user.infrastructure.mapper.UserEntityMapper;
-import de.renkensoftware.hbc.exception.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
 import static de.renkensoftware.hbc.testdatafactories.UserTestDataFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class UserJpaAdapterTest {
@@ -44,15 +42,7 @@ class UserJpaAdapterTest {
         when(userJpaRepository.findByEmail(EMAIL)).thenReturn(Optional.of(userEntity));
         when(userEntityMapper.toUser(userEntity)).thenReturn(user);
 
-        assertThat(userJpaAdapter.findByEmail(EMAIL)).isEqualTo(user);
-    }
-
-    @Test
-    void findByEmailWithoutResult() {
-
-        when(userJpaRepository.findByEmail(EMAIL)).thenReturn(Optional.empty());
-
-        assertThrows(UserNotFoundException.class, () -> userJpaAdapter.findByEmail(EMAIL));
+        assertThat(userJpaAdapter.findByEmail(EMAIL).orElse(null)).isEqualTo(user);
     }
 
     @Test
@@ -64,14 +54,6 @@ class UserJpaAdapterTest {
         when(userJpaRepository.findById(USER_ID)).thenReturn(Optional.of(userEntity));
         when(userEntityMapper.toUser(userEntity)).thenReturn(user);
 
-        assertThat(userJpaAdapter.findById(USER_ID)).isEqualTo(user);
-    }
-
-    @Test
-    void findByIdWithoutResult() {
-
-        when(userJpaRepository.findById(USER_ID)).thenReturn(Optional.empty());
-
-        assertThrows(UserNotFoundException.class, () -> userJpaAdapter.findById(USER_ID));
+        assertThat(userJpaAdapter.findById(USER_ID).orElse(null)).isEqualTo(user);
     }
 }
