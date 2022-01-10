@@ -31,4 +31,13 @@ class ExceptionControllerTest {
         assertThat(Objects.requireNonNull(response.getBody()).message()).isEqualTo("Invalid password");
         assertThat(response.getBody().code()).isEqualTo(2);
     }
+
+    @Test
+    void handleEmailAlreadyRegisteredException() {
+        ResponseEntity<ResponseError> response = exceptionController.handleEmailAlreadyRegisteredException();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_ACCEPTABLE);
+        assertThat(Objects.requireNonNull(response.getBody()).message()).isEqualTo("Email already registered");
+        assertThat(response.getBody().code()).isEqualTo(3);
+    }
 }
